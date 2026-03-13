@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sajad's Number System</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030308;
+    --surface: #0a0a14;
+    --border: #1a1a2e;
+    --accent: #4f46e5;
+    --accent2: #06b6d4;
+    --accent3: #a855f7;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --glow: rgba(79,70,229,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,70,229,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,70,229,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Radial glow */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(79,70,229,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 64px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    border: 1px solid rgba(6,182,212,0.3);
+    padding: 6px 16px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+    background: rgba(6,182,212,0.05);
+  }
+
+  h1 {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #e2e8f0 30%, var(--accent2) 70%, var(--accent3) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent3), transparent);
+    margin: 0 auto 48px;
+    max-width: 400px;
+    opacity: 0.4;
+  }
+
+  /* Numbers section */
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .numbers-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  .number-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .number-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    right: 0; height: 2px;
+    background: var(--card-color, var(--accent));
+    opacity: 0.6;
+  }
+
+  .number-card:hover {
+    border-color: rgba(79,70,229,0.4);
+    transform: translateY(-2px);
+  }
+
+  .number-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--card-color, var(--accent2));
+    margin-bottom: 6px;
+  }
+
+  .number-fgh {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* Download section */
+  .downloads {
+    animation: fadeUp 0.8s ease 0.4s both;
+  }
+
+  .download-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    transition: border-color 0.2s, background 0.2s;
+    text-decoration: none;
+    color: inherit;
+    gap: 16px;
+  }
+
+  .download-card:hover {
+    border-color: rgba(79,70,229,0.5);
+    background: rgba(79,70,229,0.05);
+  }
+
+  .download-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .file-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .file-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .file-desc {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .download-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    border: 1px solid rgba(6,182,212,0.3);
+    padding: 8px 14px;
+    border-radius: 2px;
+    white-space: nowrap;
+    transition: background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .download-card:hover .download-btn {
+    background: rgba(6,182,212,0.08);
+    border-color: rgba(6,182,212,0.6);
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 64px;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    animation: fadeUp 0.8s ease 0.6s both;
+  }
+
+  .footer span {
+    color: var(--accent3);
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .numbers-grid { grid-template-columns: 1fr; }
+    .download-card { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="badge">Trans-Ackermannian / Large Cardinal</div>
+    <h1>Sajad's Number System</h1>
+    <p class="subtitle">An original large number construction by Sajad (age 11) — spanning the Fast-Growing Hierarchy, self-referential paradox conditions, and Berkeley cardinal axioms.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <p class="section-label">The Four Constructions</p>
+  <div class="numbers-grid">
+    <div class="number-card" style="--card-color: #4f46e5">
+      <div class="number-name">SΣ · Singularity</div>
+      <div class="number-fgh">~f_(ω+1)</div>
+    </div>
+    <div class="number-card" style="--card-color: #06b6d4">
+      <div class="number-name">S_U · Unbound</div>
+      <div class="number-fgh">~f_(ω·2)</div>
+    </div>
+    <div class="number-card" style="--card-color: #a855f7">
+      <div class="number-name">S_P · Paradox</div>
+      <div class="number-fgh">~f_(ω+1) @ scale S_U</div>
+    </div>
+    <div class="number-card" style="--card-color: #f43f5e">
+      <div class="number-name">S_C · Corrosive</div>
+      <div class="number-fgh">~f_(κ_B) &gt;&gt; f_(ω·2)</div>
+    </div>
+  </div>
+
+  <p class="section-label">Downloads</p>
+  <div class="downloads">
+
+    <a class="download-card" href="Sajad_Number_System.txt" download>
+      <div class="download-info">
+        <div class="file-icon" style="background:rgba(6,182,212,0.1); color:#06b6d4">TXT</div>
+        <div>
+          <div class="file-name">Plain Text</div>
+          <div class="file-desc">sajad_number_system.txt</div>
+        </div>
+      </div>
+      <div class="download-btn">↓ Download</div>
+    </a>
+
+    <a class="download-card" href="Sajad_Number_System.doc" download>
+      <div class="download-info">
+        <div class="file-icon" style="background:rgba(79,70,229,0.1); color:#4f46e5">DOC</div>
+        <div>
+          <div class="file-name">Word Document</div>
+          <div class="file-desc">sajad_number_system.doc</div>
+        </div>
+      </div>
+      <div class="download-btn">↓ Download</div>
+    </a>
+
+    <a class="download-card" href="Sajad_Number_System.docx" download>
+      <div class="download-info">
+        <div class="file-icon" style="background:rgba(168,85,247,0.1); color:#a855f7">DOCX</div>
+        <div>
+          <div class="file-name">Word Document (Modern)</div>
+          <div class="file-desc">sajad_number_system.docx</div>
+        </div>
+      </div>
+      <div class="download-btn">↓ Download</div>
+    </a>
+
+  </div>
+
+  <div class="footer">
+    <p>Sajad's Number System — 2026 — All constructions <span>original</span></p>
+    <p style="margin-top:8px">Built with mathematical scrutiny from Claude · Framework by Gemini</p>
+  </div>
+
+</div>
+</body>
+</html>
